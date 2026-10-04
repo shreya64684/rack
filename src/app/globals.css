@@ -1,0 +1,208 @@
+@import "tailwindcss";
+
+/*
+  Rack tokens — see DECISIONS.md D-010.
+  calico: cool unbleached cotton (page)   ink: indigo thread (text)
+  chalk: tailor's chalk pink (active fills, tags)   mat: photo mounts
+*/
+@theme {
+  --color-calico: #eceee8;
+  --color-ink: #1d2242;
+  --color-muted: #565b75;
+  --color-chalk: #f2b8c6;
+  --color-mat: #ffffff;
+  --color-seam: #777c74;
+  --color-thread: #c9ccc3;
+  --color-alert: #9a3350;
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-drape: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-calico);
+    color: var(--color-ink);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-variation-settings: "wdth" 100;
+    line-height: 1.5;
+    min-height: 100dvh;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  ::selection {
+    background: var(--color-chalk);
+    color: var(--color-ink);
+  }
+}
+
+@layer components {
+  /* The house voice: Archivo stretched to its widest, like a garment label. */
+  .display {
+    font-variation-settings: "wdth" 125;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 0.92;
+  }
+  .wide {
+    font-variation-settings: "wdth" 118;
+  }
+  .page-title {
+    font-size: clamp(3.5rem, 10vw, 7rem);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0 1.25rem;
+    border-radius: 999px;
+    font-weight: 600;
+    border: 2px solid var(--color-ink);
+    transition: background-color 120ms, color 120ms;
+  }
+  .btn-solid {
+    background: var(--color-ink);
+    color: var(--color-calico);
+  }
+  .btn-solid:hover {
+    background: #2c335e;
+  }
+  .btn-line {
+    background: transparent;
+    color: var(--color-ink);
+  }
+  .btn-line:hover,
+  .btn-line[aria-pressed="true"] {
+    background: var(--color-chalk);
+  }
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  /* Inline text actions: Delete, Remove, Change place… */
+  .link-btn {
+    min-height: 24px;
+    padding-block: 0.25rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  /* Visual half of <PillRadio>: the real radio input sits invisibly on top as a peer. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 1.1rem;
+    border: 2px solid var(--color-ink);
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .peer:checked + .pill {
+    background: var(--color-chalk);
+  }
+  .peer:focus-visible + .pill {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  .field {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-mat);
+    border: 1.5px solid var(--color-seam);
+    border-radius: 4px;
+    color: var(--color-ink);
+  }
+
+  /* A swing tag: punched hole, string, slight tilt. Used for the "why it works" notes. */
+  .hangtag {
+    position: relative;
+    background: var(--color-chalk);
+    padding: 2.75rem 1.5rem 1.5rem;
+    border-radius: 6px 6px 14px 14px;
+    clip-path: polygon(18% 0, 82% 0, 100% 9%, 100% 100%, 0 100%, 0 9%);
+    transform: rotate(-1.5deg);
+  }
+  .hangtag::before {
+    content: "";
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    margin-left: -7px;
+    border-radius: 50%;
+    background: var(--color-calico);
+    box-shadow: inset 0 0 0 2px var(--color-ink);
+  }
+
+  /* Closet rail */
+  .rail {
+    position: relative;
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    padding: 1.75rem 0.25rem 1rem;
+    /* No scroll-snap: browsers re-snap to the old first piece after an insert, hiding the new one. */
+    overscroll-behavior-x: contain;
+  }
+  /* Runs through the hanger hooks of the first row. */
+  .rail-rod {
+    position: absolute;
+    inset-inline: 0;
+    top: 2.3rem;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-ink);
+  }
+}
+
+/* The single orchestrated motion moment: a look "dresses" — top drops, bottom rises. */
+@keyframes drop-in {
+  from {
+    transform: translateY(-14px);
+    opacity: 0;
+  }
+}
+@keyframes rise-in {
+  from {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+}
+.dress-top {
+  animation: drop-in 420ms var(--ease-drape) both;
+}
+.dress-bottom {
+  animation: rise-in 420ms 60ms var(--ease-drape) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dress-top,
+  .dress-bottom {
+    animation: none;
+  }
+}
+
+dialog::backdrop {
+  background: rgb(29 34 66 / 0.55);
+}
